@@ -5,7 +5,7 @@ before_build:
 - cmd: Nuget restore
 - ps: ./update-version.ps1
 build:
-  project: MapReduct.Net.sln
+  project: MapReduce.Net.sln
   verbosity: minimal
 
 after_build:
