@@ -2,13 +2,14 @@
 
   <PropertyGroup>
     <PackageVersion>0.0.1</PackageVersion>
+    <Title>MapReduce in .NET</Title>
     <Description>In memory Map Reduce pattern implementation in .NET</Description>
     <AssemblyTitle>MapReduce.NET</AssemblyTitle>
     <Authors>Yuan(Eddy) Ma</Authors>
     <TargetFrameworks>net45;netstandard1.1</TargetFrameworks>
     <AssemblyName>MapReduce.Net</AssemblyName>
     <PackageId>MapReduce.Net</PackageId>
-    <PackageTags>.NET;MapReduct;In Memory</PackageTags>
+    <PackageTags>MapReduce;In Memory</PackageTags>
     <PackageProjectUrl>https://github.com/mayuanyang/MapReduce.Net</PackageProjectUrl>
     <PackageLicenseUrl>http://www.apache.org/licenses/LICENSE-2.0</PackageLicenseUrl>
     <NetStandardImplicitPackageVersion Condition=" '$(TargetFramework)' == 'netstandard1.1' ">1.6.1</NetStandardImplicitPackageVersion>
