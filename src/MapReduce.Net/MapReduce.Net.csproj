@@ -3,7 +3,7 @@
   <PropertyGroup>
     <PackageVersion>0.0.1</PackageVersion>
     <Title>MapReduce in .NET</Title>
-    <Description>In memory Map Reduce pattern implementation in .NET</Description>
+    <Description>In memory MapReduce pattern implementation in .NET</Description>
     <AssemblyTitle>MapReduce.NET</AssemblyTitle>
     <Authors>Yuan(Eddy) Ma</Authors>
     <TargetFrameworks>net45;netstandard1.1</TargetFrameworks>
