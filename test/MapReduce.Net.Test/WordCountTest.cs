@@ -1,16 +1,18 @@
 using System.Threading.Tasks;
 using MapReduce.Net.Test.Mappers;
 using MapReduce.Net.Impl;
+using MapReduce.Net.Test.Context;
 using MapReduce.Net.Test.DataBatchProcessors;
 using MapReduce.Net.Test.Reducers;
+using TestStack.BDDfy;
 using Xunit;
 
 namespace MapReduce.Net.Test
 {
     public class WordCountTest
     {
-        private string _content = "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported" +
-                                  "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported" +
+        private string _content = "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported\n" +
+                                  "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported\n" +
                                   "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported";
 
         private Job _job;
@@ -22,13 +24,13 @@ namespace MapReduce.Net.Test
         public void AndGivenTheJobIsConfigured()
         {
             var configurator =
-                new MapReduceConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), typeof(WordCountContext));
             _job = new Job(configurator);
         }
 
-        public Task WhenTheJobIsExecuted()
+        public async Task WhenTheJobIsExecuted()
         {
-            return Task.FromResult(0);
+            await _job.Run(_content);
         }
 
         public void ThenWeShouldGetTheWordCountResult()
@@ -37,8 +39,9 @@ namespace MapReduce.Net.Test
         }
 
         [Fact]
-        public void Test1()
+        public void Run()
         {
+            this.BDDfy();
         }
     }
 }

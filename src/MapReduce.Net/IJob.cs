@@ -4,6 +4,6 @@ namespace MapReduce.Net
 {
     public interface IJob
     {
-        Task Run();
+        Task Run(object input);
     }
 }

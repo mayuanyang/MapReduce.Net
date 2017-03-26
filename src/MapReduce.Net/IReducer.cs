@@ -1,9 +1,11 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace MapReduce.Net
 {
-    public interface IReducer<TKey, TValue, TContext>
+    public interface IReducer<TInputKey, TInputValue, TOutPutKey, TOutputValue, TContext>
     {
-        Task Reduce(TKey input, TValue values, TContext context);
+        List<KeyValuePair<TOutPutKey, TOutputValue>> KeyValuePairs { get; }
+        Task Reduce(TInputKey key, TInputValue values, TContext context);
     }
 }

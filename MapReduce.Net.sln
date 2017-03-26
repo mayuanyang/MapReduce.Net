@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapReduce.Net.Test", "test\
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test", "test", "{985B4089-4508-45E6-9FCB-5FA58137D179}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MapReduce.Net.Autofac", "src\MapReduce.Net.Autofac\MapReduce.Net.Autofac.csproj", "{8E724F73-5EA2-4ACD-BF08-B212215CA609}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -25,6 +27,10 @@ Global
 		{6B5E4B3A-09D8-4FB1-85A4-9FDA6F150B8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6B5E4B3A-09D8-4FB1-85A4-9FDA6F150B8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6B5E4B3A-09D8-4FB1-85A4-9FDA6F150B8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E724F73-5EA2-4ACD-BF08-B212215CA609}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E724F73-5EA2-4ACD-BF08-B212215CA609}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E724F73-5EA2-4ACD-BF08-B212215CA609}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E724F73-5EA2-4ACD-BF08-B212215CA609}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -32,5 +38,6 @@ Global
 	GlobalSection(NestedProjects) = preSolution
 		{6E1BEC5D-03FE-4C22-86E2-F91CAEC66DED} = {F7E729F1-CBEF-4BEE-8003-273E19E51A20}
 		{6B5E4B3A-09D8-4FB1-85A4-9FDA6F150B8B} = {985B4089-4508-45E6-9FCB-5FA58137D179}
+		{8E724F73-5EA2-4ACD-BF08-B212215CA609} = {F7E729F1-CBEF-4BEE-8003-273E19E51A20}
 	EndGlobalSection
 EndGlobal
