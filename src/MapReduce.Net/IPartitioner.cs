@@ -1,7 +1,11 @@
-﻿namespace MapReduce.Net
+﻿using System.Threading.Tasks;
+using MapReduce.Net.Impl;
+
+namespace MapReduce.Net
 {
     public interface IPartitioner
     {
-        //Don't know what to do with this one yet
+        Task Shuffle(ExecutionContext context);
+
     }
 }

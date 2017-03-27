@@ -8,7 +8,6 @@ namespace MapReduce.Net
         Type TypeOfCombiner { get; }
         Type TypeOfReducer { get; }
         Type TypeOfDataBatchProcessor { get; }
-        Type TypeOfContext { get; }
         IDependancyScope DependancyScope { get; }
     }
 }

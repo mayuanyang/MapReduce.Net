@@ -1,7 +1,6 @@
 using System.Threading.Tasks;
 using MapReduce.Net.Test.Mappers;
 using MapReduce.Net.Impl;
-using MapReduce.Net.Test.Context;
 using MapReduce.Net.Test.DataBatchProcessors;
 using MapReduce.Net.Test.Reducers;
 using TestStack.BDDfy;
@@ -15,7 +14,7 @@ namespace MapReduce.Net.Test
                                   "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported\n" +
                                   "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported";
 
-        private Job _job;
+        private Job<string> _job;
         public void GivenAString()
         {
             
@@ -24,8 +23,8 @@ namespace MapReduce.Net.Test
         public void AndGivenTheJobIsConfigured()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), typeof(WordCountContext));
-            _job = new Job(configurator);
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
+            _job = new Job<string>(configurator);
         }
 
         public async Task WhenTheJobIsExecuted()

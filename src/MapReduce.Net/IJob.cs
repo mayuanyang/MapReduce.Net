@@ -2,8 +2,9 @@
 
 namespace MapReduce.Net
 {
-    public interface IJob
+    public interface IJob<TData>
     {
-        Task Run(object input);
+        Task Run(TData input);
+
     }
 }

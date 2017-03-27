@@ -2,7 +2,7 @@
 
 namespace MapReduce.Net
 {
-    public interface ICombiner<TInputKey, TInputValue, TOutputKey, TOutputValue, TContext> : IReducer<TInputKey, TInputValue, TOutputKey, TOutputValue, TContext>
+    public interface ICombiner<TInputKey, TInputValue, TOutputKey, TOutputValue> : IReducer<TInputKey, TInputValue, TOutputKey, TOutputValue>
     {
         
     }
