@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Impl
 {
-    public class Job<TData> : IJob<TData>
+    public class Job<TInputData, TReturnData> : IJob<TInputData, TReturnData>
     {
         private readonly IJobConfigurator _configurator;
 
@@ -15,7 +15,7 @@ namespace MapReduce.Net.Impl
         {
             _configurator = configurator;
         }
-        public async Task Run<TKey, TValue>(TData inputData)
+        public async Task<TReturnData> Run<TMapperKey, TMapperValue>(TInputData inputData)
         {
             if (_configurator.TypeOfMapper == null)
             {
@@ -77,22 +77,28 @@ namespace MapReduce.Net.Impl
                 
                 await Task.WhenAll(mapperTasks);
 
+                
+                List<KeyValuePair<TMapperKey, TMapperValue>> allKeyValuePairs = new List<KeyValuePair<TMapperKey, TMapperValue>>();
                 var combineTasks = new List<Task>();
                 foreach (INode node in context.Nodes)
                 {
-                    // union all keyvalue pairs
+                    // concat all keyvalue pairs
+                    var allKeyValuePairsForNode = (List<KeyValuePair<TMapperKey, TMapperValue>>)node.Mappers[0].GetType().GetRuntimeProperty("KeyValuePairs").GetValue(node.Mappers[0], null);
+                    for (int i = 1; i < node.Mappers.Count; i++)
+                    {
+                        var current = (List<KeyValuePair<TMapperKey, TMapperValue>>)node.Mappers[i].GetType().GetRuntimeProperty("KeyValuePairs").GetValue(node.Mappers[i], null);
+                        allKeyValuePairsForNode = allKeyValuePairsForNode.Concat(current).ToList();
+                    }
+
+                    allKeyValuePairsForNode = allKeyValuePairs.Concat(allKeyValuePairsForNode).ToList();
+                    
                     if (_configurator.TypeOfCombiner != null)
                     {
-                        var allObjects = (List<KeyValuePair<TKey, TValue>>)node.Mappers[0].GetType().GetRuntimeProperty("KeyValuePairs").GetValue(node.Mappers[0], null);
-                        for (int i = 1; i< node.Mappers.Count; i++)
-                        {
-                            var current = (List<KeyValuePair<TKey, TValue>>)node.Mappers[i].GetType().GetRuntimeProperty("KeyValuePairs").GetValue(node.Mappers[i], null);
-                            allObjects = allObjects.Concat(current).ToList();
-                        }
+                        
                         var combiner = (ICombiner)Activator.CreateInstance(_configurator.TypeOfCombiner);
                         node.Combiner = combiner;
                         var combineMethod = _configurator.TypeOfCombiner.GetRuntimeMethods().Single(m => m.Name == "Combine" && m.IsPublic && m.GetParameters().Any());
-                        var combineTask = Task.Run(() => combineMethod.Invoke(combiner, new object[] { combiner.GetHashCode().ToString(), allObjects}));
+                        var combineTask = Task.Run(() => combineMethod.Invoke(combiner, new object[] { combiner.GetHashCode().ToString(), allKeyValuePairsForNode}));
                         combineTasks.Add(combineTask);
                     }
                 }
@@ -101,15 +107,33 @@ namespace MapReduce.Net.Impl
                     await Task.WhenAll(combineTasks);
                 }
 
-                // Run reduce in each reducer
+                // Run reducer
+                var reducer = Activator.CreateInstance(_configurator.TypeOfReducer);
+                var reduceMethod = _configurator.TypeOfReducer.GetRuntimeMethods().Single(m => m.Name == "Reduce" && m.IsPublic && m.GetParameters().Any());
+                if (_configurator.TypeOfCombiner != null)
+                {
+                    var allKeyValueParisFromCombiner = new List<KeyValuePair<TMapperKey, TMapperValue>>();
+                    foreach (var node in context.Nodes)
+                    {
+                        var keyValuePairsFromCombiner = (List<KeyValuePair<TMapperKey, TMapperValue>>)node.Combiner.GetType().GetRuntimeProperty("KeyValuePairs").GetValue(node.Combiner, null);
+                        allKeyValueParisFromCombiner = allKeyValueParisFromCombiner.Concat(keyValuePairsFromCombiner)
+                            .ToList();
+                    }
+                    var reduceTask = await Task.Run(() => reduceMethod.Invoke(reducer, new object[] { reducer.GetHashCode().ToString(), allKeyValueParisFromCombiner }));
+                    var typeInfo = reduceTask.GetType().GetTypeInfo();
 
+                    var reduceResultProperty = typeInfo.GetDeclaredProperty("Result").GetMethod;
+                    var result = reduceResultProperty.Invoke(reduceTask, new object[] { });
+
+                    return (TReturnData) result;
+                }
+                return (TReturnData)await Task.Run(() => reduceMethod.Invoke(reducer, new object[] { reducer.GetHashCode().ToString(), allKeyValuePairs }));
             }
             else
             {
                 throw new NotImplementedException();
                 
             }
-         
         }
     }
 }

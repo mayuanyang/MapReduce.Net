@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.Reducers
 {
-    class WordCountReducer : IReducer<string, IEnumerable<int>, string, int>
+    class WordCountReducer : IReducer<string, IEnumerable<KeyValuePair<string, int>>, List<KeyValuePair<string, int>>>
     {
         public List<KeyValuePair<string, int>> KeyValuePairs { get; }
 
@@ -14,15 +14,30 @@ namespace MapReduce.Net.Test.Reducers
             KeyValuePairs = new List<KeyValuePair<string, int>>();
         }
 
-        public Task Reduce(string key, IEnumerable<int> values)
+        public async Task<List<KeyValuePair<string, int>>> Reduce(string key, IEnumerable<KeyValuePair<string, int>> values)
         {
-            var result = 0;
-            foreach (var value in values)
+            Console.WriteLine();
+            var dictionary = new Dictionary<string, int>();
+
+            foreach (var keyValue in values)
             {
-                result += value;
+                if (dictionary.ContainsKey(keyValue.Key.ToUpper()))
+                {
+                    dictionary[keyValue.Key.ToUpper()] = dictionary[keyValue.Key.ToUpper()] + keyValue.Value;
+                }
+                else
+                {
+                    dictionary.Add(keyValue.Key.ToUpper(), keyValue.Value);
+                }
             }
-            KeyValuePairs.Add(new KeyValuePair<string, int>(key, result));
-            return Task.FromResult(0);
+
+            foreach (var de in dictionary)
+            {
+                Console.WriteLine($"Reducer {GetHashCode()} Key: {de.Key} Value: {de.Value}");
+                KeyValuePairs.Add(new KeyValuePair<string, int>(de.Key, de.Value));
+            }
+
+            return await Task.FromResult(KeyValuePairs);
         }
     }
 }
