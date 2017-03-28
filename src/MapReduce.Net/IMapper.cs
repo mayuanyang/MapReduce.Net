@@ -6,12 +6,11 @@ namespace MapReduce.Net
 {
     public interface IMapper
     {
-        
+
     }
-    public interface IMapper<TInputKey, TInputValue, TMapKey, TMapValue> : IMapper
+    public interface IMapper<TInputKey, TInputValue, TOutputKey, TOutputValue> : IMapper
     {
-        List<KeyValuePair<TMapKey, TMapValue>> KeyValuePairs { get; } 
+        List<KeyValuePair<TOutputKey, TOutputValue>> KeyValuePairs { get; }
         Task Map(TInputKey key, TInputValue value);
-        void Combine();
     }
 }

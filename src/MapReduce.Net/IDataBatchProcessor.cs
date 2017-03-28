@@ -8,7 +8,7 @@ namespace MapReduce.Net
         
     }
     public interface IDataBatchProcessor<TInputData, TOutputData> : IDataBatchProcessor
-        where TOutputData : IEnumerable
+        where TOutputData : IList
     {
         Task<TOutputData> Run(TInputData inputData);
     }

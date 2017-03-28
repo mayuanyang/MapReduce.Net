@@ -6,12 +6,13 @@ namespace MapReduce.Net.Test.Mappers
 {
     class WordCountMapper : IMapper<string, string, string, int>
     {
-        public List<KeyValuePair<string, int>> KeyValuePairs { get; }
-
         public WordCountMapper()
         {
             KeyValuePairs = new List<KeyValuePair<string, int>>();
         }
+
+        public List<KeyValuePair<string, int>> KeyValuePairs { get; }
+
         public Task Map(string key, string value)
         {
             var words = value.Split(' ');
@@ -23,13 +24,8 @@ namespace MapReduce.Net.Test.Mappers
             }
             
             Console.WriteLine($"Mapper: {key} ThreadId: {System.Threading.Thread.CurrentThread.ManagedThreadId}\nKeyValues:\n{printContent}");
-            Combine();
             return Task.FromResult(0);
         }
-
-        public void Combine()
-        {
-            
-        }
+        
     }
 }

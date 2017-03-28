@@ -1,6 +1,7 @@
 using System.Threading.Tasks;
 using MapReduce.Net.Test.Mappers;
 using MapReduce.Net.Impl;
+using MapReduce.Net.Test.Combiners;
 using MapReduce.Net.Test.DataBatchProcessors;
 using MapReduce.Net.Test.Reducers;
 using TestStack.BDDfy;
@@ -23,13 +24,13 @@ namespace MapReduce.Net.Test
         public void AndGivenTheJobIsConfigured()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
             _job = new Job<string>(configurator);
         }
 
         public async Task WhenTheJobIsExecuted()
         {
-            await _job.Run(_content);
+            await _job.Run<string, int>(_content);
         }
 
         public void ThenWeShouldGetTheWordCountResult()
