@@ -11,7 +11,7 @@ using Xunit;
 
 namespace MapReduce.Net.Test
 {
-    public class WordCountTest
+    public class WordCountWithCombinerTest
     {
         private string _content = "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported\n" +
                                   "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported\n" +

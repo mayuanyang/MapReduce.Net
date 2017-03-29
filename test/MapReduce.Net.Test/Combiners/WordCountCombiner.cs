@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.Combiners
 {
-    class WordCountCombiner : ICombiner<string, IEnumerable<KeyValuePair<string, int>>, string, int>
+    public class WordCountCombiner : ICombiner<string, IEnumerable<KeyValuePair<string, int>>, string, int>
     {
         public WordCountCombiner()
         {

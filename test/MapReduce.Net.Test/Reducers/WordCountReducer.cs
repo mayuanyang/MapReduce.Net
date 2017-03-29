@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.Reducers
 {
-    class WordCountReducer : IReducer<string, IEnumerable<KeyValuePair<string, int>>, List<KeyValuePair<string, int>>>
+    public class WordCountReducer : IReducer<string, IEnumerable<KeyValuePair<string, int>>, List<KeyValuePair<string, int>>>
     {
         public List<KeyValuePair<string, int>> KeyValuePairs { get; }
 

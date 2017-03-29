@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="GoogleMapApi.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="GoogleMapApi.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BenchmarkDotNet" Version="0.10.3" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
+    <PackageReference Include="xunit" Version="2.2.0" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\MapReduce.Net\MapReduce.Net.csproj" />
+    <ProjectReference Include="..\MapReduce.Net.Test\MapReduce.Net.Test.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="GoogleMapApi.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

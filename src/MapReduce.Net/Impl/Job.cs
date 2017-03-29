@@ -90,7 +90,7 @@ namespace MapReduce.Net.Impl
                         allKeyValuePairsForNode = allKeyValuePairsForNode.Concat(current).ToList();
                     }
 
-                    allKeyValuePairsForNode = allKeyValuePairs.Concat(allKeyValuePairsForNode).ToList();
+                    allKeyValuePairs = allKeyValuePairs.Concat(allKeyValuePairsForNode).ToList();
                     
                     if (_configurator.TypeOfCombiner != null)
                     {
@@ -115,19 +115,33 @@ namespace MapReduce.Net.Impl
                     var allKeyValueParisFromCombiner = new List<KeyValuePair<TMapperKey, TMapperValue>>();
                     foreach (var node in context.Nodes)
                     {
-                        var keyValuePairsFromCombiner = (List<KeyValuePair<TMapperKey, TMapperValue>>)node.Combiner.GetType().GetRuntimeProperty("KeyValuePairs").GetValue(node.Combiner, null);
+                        var keyValuePairsFromCombiner = (List<KeyValuePair<TMapperKey, TMapperValue>>) node.Combiner
+                            .GetType()
+                            .GetRuntimeProperty("KeyValuePairs")
+                            .GetValue(node.Combiner, null);
                         allKeyValueParisFromCombiner = allKeyValueParisFromCombiner.Concat(keyValuePairsFromCombiner)
                             .ToList();
                     }
-                    var reduceTask = await Task.Run(() => reduceMethod.Invoke(reducer, new object[] { reducer.GetHashCode().ToString(), allKeyValueParisFromCombiner }));
+                    
+                    return await DoReduce(allKeyValueParisFromCombiner);
+                }
+                else
+                {
+                    return await DoReduce(allKeyValuePairs);
+                }
+
+                async Task<TReturnData> DoReduce(List<KeyValuePair<TMapperKey, TMapperValue>> data)
+                {
+                    var reduceTask = await Task.Run(() => reduceMethod.Invoke(reducer,
+                        new object[] { reducer.GetHashCode().ToString(), data }));
                     var typeInfo = reduceTask.GetType().GetTypeInfo();
 
                     var reduceResultProperty = typeInfo.GetDeclaredProperty("Result").GetMethod;
                     var result = reduceResultProperty.Invoke(reduceTask, new object[] { });
 
-                    return (TReturnData) result;
+                    return (TReturnData)result;
                 }
-                return (TReturnData)await Task.Run(() => reduceMethod.Invoke(reducer, new object[] { reducer.GetHashCode().ToString(), allKeyValuePairs }));
+                
             }
             else
             {

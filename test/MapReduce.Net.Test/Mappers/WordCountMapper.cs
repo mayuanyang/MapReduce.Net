@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.Mappers
 {
-    class WordCountMapper : IMapper<string, string, string, int>
+    public class WordCountMapper : IMapper<string, string, string, int>
     {
         public WordCountMapper()
         {

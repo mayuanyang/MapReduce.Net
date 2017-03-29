@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.DataBatchProcessors
 {
-    class WordCountDataBatchProcessor : IDataBatchProcessor<string, List<string>>
+    public class WordCountDataBatchProcessor : IDataBatchProcessor<string, List<string>>
     {
         public Task<List<string>> Run(string inputData)
         {
