@@ -17,20 +17,70 @@ namespace MapReduce.Net.Benchmark
     public class WordCountBenchmark
     {
         [Benchmark]
-        public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner()
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombinerAutoNumOfMappersPerNode()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 20);
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
             var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
             var result = await job.Run<string, int>(ReadFile());
             return result;
         }
 
         [Benchmark]
-        public async Task<List<KeyValuePair<string, int>>> WordCountWithCombiner()
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner15MappersPerNode()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 20);
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 15);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner30MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 30);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner50MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 50);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner100MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 100);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner200MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 200);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithCombinerAutoNumberOfMappers()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
             var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
             var result = await job.Run<string, int>(ReadFile());
             return result;

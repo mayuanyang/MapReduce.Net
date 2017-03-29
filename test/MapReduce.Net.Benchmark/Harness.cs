@@ -17,8 +17,8 @@ namespace MapReduce.Net.Benchmark
         public async Task JustRunWithoutBenchmark()
         {
             var runner = new WordCountBenchmark();
-            var result1 = await runner.WordCountWithoutCombiner();
-            var result2 = await runner.WordCountWithCombiner();
+            var result1 = await runner.WordCountWithoutCombinerAutoNumOfMappersPerNode();
+            var result2 = await runner.WordCountWithCombinerAutoNumberOfMappers();
             var result3 = await runner.WordCountWithoutUsingMapReduce();
         }
     }

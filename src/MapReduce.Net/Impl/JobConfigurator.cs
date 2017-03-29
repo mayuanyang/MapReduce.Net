@@ -12,7 +12,7 @@ namespace MapReduce.Net.Impl
         public IDependancyScope DependancyScope { get; }
 
 
-        public JobConfigurator(Type typeOfMapper, Type typeOfCombiner, Type typeOfReducer, Type typeOfDataBatchProcessor, int numberOfMappersPerNode = 2, IDependancyScope dependancyScope = null)
+        public JobConfigurator(Type typeOfMapper, Type typeOfCombiner, Type typeOfReducer, Type typeOfDataBatchProcessor, int numberOfMappersPerNode = 0, IDependancyScope dependancyScope = null)
         {
             TypeOfMapper = typeOfMapper;
             TypeOfCombiner = typeOfCombiner;
