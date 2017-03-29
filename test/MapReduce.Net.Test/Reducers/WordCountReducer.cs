@@ -16,7 +16,9 @@ namespace MapReduce.Net.Test.Reducers
 
         public async Task<List<KeyValuePair<string, int>>> Reduce(string key, IEnumerable<KeyValuePair<string, int>> values)
         {
+#if DEBUG
             Console.WriteLine();
+#endif
             var dictionary = new Dictionary<string, int>();
 
             foreach (var keyValue in values)
@@ -33,7 +35,10 @@ namespace MapReduce.Net.Test.Reducers
 
             foreach (var de in dictionary)
             {
+#if DEBUG
                 Console.WriteLine($"Reducer {GetHashCode()} Key: {de.Key} Value: {de.Value}");
+#endif
+
                 KeyValuePairs.Add(new KeyValuePair<string, int>(de.Key, de.Value));
             }
 

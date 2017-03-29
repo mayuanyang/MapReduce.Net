@@ -22,8 +22,9 @@ namespace MapReduce.Net.Test.Mappers
                 KeyValuePairs.Add(new KeyValuePair<string, int>(word, 1));
                 printContent += $"Key: {word}, Value: {1} \n";
             }
-            
+#if DEBUG
             Console.WriteLine($"Mapper: {key} ThreadId: {System.Threading.Thread.CurrentThread.ManagedThreadId}\nKeyValues:\n{printContent}");
+#endif
             return Task.FromResult(0);
         }
         

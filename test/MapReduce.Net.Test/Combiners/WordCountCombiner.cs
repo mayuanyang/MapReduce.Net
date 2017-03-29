@@ -29,7 +29,10 @@ namespace MapReduce.Net.Test.Combiners
 
             foreach (var de in dictionary)
             {
+#if DEBUG
+
                 Console.WriteLine($"Combiner {GetHashCode()} Key: {de.Key} Value: {de.Value}");
+#endif
                 KeyValuePairs.Add(new KeyValuePair<string, int>(de.Key, de.Value));
             }
 

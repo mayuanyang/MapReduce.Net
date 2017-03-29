@@ -11,7 +11,21 @@ namespace MapReduce.Net.Test.DataBatchProcessors
         public Task<List<string>> Run(string inputData)
         {
             var lines = inputData.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
-            return Task.FromResult(lines);
+            int half = lines.Count / 2;
+            var list = new List<string>();
+            var str = "";
+            for (int i = 0; i < half; i++)
+            {
+                str += " " + lines[i];
+            }
+            list.Add(str);
+            str = "";
+            for (int i = half; i < lines.Count; i++)
+            {
+                str += " " + lines[i];
+            }
+            list.Add(str);
+            return Task.FromResult(list);
         }
     }
 }
