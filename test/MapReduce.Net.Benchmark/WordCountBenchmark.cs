@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
@@ -87,6 +86,36 @@ namespace MapReduce.Net.Benchmark
         }
 
         [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithCombiner5MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 5);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithCombiner15MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 15);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithCombiner30MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 30);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
         public async Task<Hashtable> WordCountWithoutUsingMapReduce()
         {
             var dataProcessor = new WordCountDataBatchProcessor();
@@ -110,6 +139,8 @@ namespace MapReduce.Net.Benchmark
             }
             return wordCount;
         }
+
+
 
         private string ReadFile()
         {

@@ -14,7 +14,7 @@ namespace MapReduce.Net.Test.Reducers
             KeyValuePairs = new List<KeyValuePair<string, int>>();
         }
 
-        public async Task<List<KeyValuePair<string, int>>> Reduce(string key, IEnumerable<KeyValuePair<string, int>> values)
+        public Task<List<KeyValuePair<string, int>>> Reduce(string key, IEnumerable<KeyValuePair<string, int>> values)
         {
 #if DEBUG
             Console.WriteLine();
@@ -42,7 +42,7 @@ namespace MapReduce.Net.Test.Reducers
                 KeyValuePairs.Add(new KeyValuePair<string, int>(de.Key, de.Value));
             }
 
-            return await Task.FromResult(KeyValuePairs);
+            return Task.FromResult(KeyValuePairs);
         }
     }
 }

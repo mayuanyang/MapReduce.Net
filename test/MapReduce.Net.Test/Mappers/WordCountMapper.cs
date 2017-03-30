@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -17,9 +18,22 @@ namespace MapReduce.Net.Test.Mappers
         {
             var words = value.Split(' ');
             string printContent = "";
+            var ht = new Hashtable();
             foreach (var word in words)
             {
-                KeyValuePairs.Add(new KeyValuePair<string, int>(word, 1));
+                if (ht.ContainsKey(word))
+                {
+                    ht[word] = (int) ht[word] + 1;
+                }
+                else
+                {
+                    ht.Add(word, 1);
+                }
+                
+            }
+            foreach (var word in ht.Keys)
+            {
+                KeyValuePairs.Add(new KeyValuePair<string, int>(word.ToString(), (int)ht[word]));
                 printContent += $"Key: {word}, Value: {1} \n";
             }
 #if DEBUG

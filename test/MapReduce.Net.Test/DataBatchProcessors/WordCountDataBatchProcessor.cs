@@ -10,18 +10,39 @@ namespace MapReduce.Net.Test.DataBatchProcessors
     {
         public Task<List<string>> Run(string inputData)
         {
-            int lengthPerLineItem = 500;
-            inputData = inputData.Replace("\r\n", " ").Replace("\n", " ");
-            if (inputData.Length <= lengthPerLineItem)
+            var result = new List<string>();
+            var lines = inputData.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
+            if (lines.Count >= 100)
             {
-                return Task.FromResult(new List<string> {inputData});
+                int tracker = 0;
+                var sb = new StringBuilder();
+                foreach (var line in lines)
+                {
+                    if (tracker != 0 && tracker % 50 == 0)
+                    {
+                        result.Add(sb.ToString());
+                        sb = new StringBuilder();
+                    }
+                    sb.Append(" ");
+                    sb.Append(line);
+                    tracker += 1;
+                }
+                result.Add(sb.ToString());
+            }
+            else
+            {
+                result = lines;
             }
 
-            var lines = Enumerable.Range(0, inputData.Length / lengthPerLineItem).Select(i => inputData.Substring(i * lengthPerLineItem, lengthPerLineItem)).ToList();
-            
-            //var lines = inputData.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
-            
-            return Task.FromResult(lines);
+            return Task.FromResult(result);
+        }
+
+        public static IEnumerable<string> SplitByLength(string str, int maxLength)
+        {
+            for (int index = 0; index < str.Length; index += maxLength)
+            {
+                yield return str.Substring(index, Math.Min(maxLength, str.Length - index));
+            }
         }
     }
 }

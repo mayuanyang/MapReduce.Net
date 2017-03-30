@@ -8,10 +8,11 @@ namespace MapReduce.Net.Test.Combiners
     {
         public WordCountCombiner()
         {
-            KeyValuePairs = new List<KeyValuePair<string, int>>();
+            _keyValuePairs = new List<KeyValuePair<string, int>>();
         }
-        public IList<KeyValuePair<string, int>> KeyValuePairs { get; }
-        public Task Combine(string key, IEnumerable<KeyValuePair<string, int>> values)
+
+        private List<KeyValuePair<string, int>> _keyValuePairs;
+        public Task<List<KeyValuePair<string, int>>> Combine(string key, IEnumerable<KeyValuePair<string, int>> values)
         {
             var dictionary = new Dictionary<string, int>();
             
@@ -19,11 +20,11 @@ namespace MapReduce.Net.Test.Combiners
             {
                 if (dictionary.ContainsKey(keyValue.Key.ToUpper()))
                 {
-                    dictionary[keyValue.Key.ToUpper()] = dictionary[keyValue.Key.ToUpper()] + 1;
+                    dictionary[keyValue.Key.ToUpper()] = dictionary[keyValue.Key.ToUpper()] + keyValue.Value;
                 }
                 else
                 {
-                    dictionary.Add(keyValue.Key.ToUpper(), 1);
+                    dictionary.Add(keyValue.Key.ToUpper(), keyValue.Value);
                 }
             }
 
@@ -33,10 +34,10 @@ namespace MapReduce.Net.Test.Combiners
 
                 Console.WriteLine($"Combiner {GetHashCode()} Key: {de.Key} Value: {de.Value}");
 #endif
-                KeyValuePairs.Add(new KeyValuePair<string, int>(de.Key, de.Value));
+                _keyValuePairs.Add(new KeyValuePair<string, int>(de.Key, de.Value));
             }
 
-            return Task.FromResult(0);
+            return Task.FromResult(_keyValuePairs);
         }
     }
 }
