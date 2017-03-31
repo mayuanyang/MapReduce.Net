@@ -5,6 +5,8 @@ using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
+using BenchmarkDotNet.Attributes.Columns;
+using BenchmarkDotNet.Order;
 using MapReduce.Net.Impl;
 using MapReduce.Net.Test.Combiners;
 using MapReduce.Net.Test.DataBatchProcessors;
@@ -13,6 +15,8 @@ using MapReduce.Net.Test.Reducers;
 
 namespace MapReduce.Net.Benchmark
 {
+    [RankColumn]
+    [OrderProvider(SummaryOrderPolicy.FastestToSlowest)]
     public class WordCountBenchmark
     {
         [Benchmark]
@@ -66,6 +70,16 @@ namespace MapReduce.Net.Benchmark
         }
 
         [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner150MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 150);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
         public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner200MappersPerNode()
         {
             var configurator =
@@ -110,6 +124,16 @@ namespace MapReduce.Net.Benchmark
         {
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 30);
+            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            var result = await job.Run<string, int>(ReadFile());
+            return result;
+        }
+
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithCombiner150MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 150);
             var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
             var result = await job.Run<string, int>(ReadFile());
             return result;

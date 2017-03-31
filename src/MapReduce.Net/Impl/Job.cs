@@ -43,8 +43,14 @@ namespace MapReduce.Net.Impl
 
                 if (numOfMappersPerNode == 0)
                 {
-                    numOfMappersPerNode = chunks.Count / (int)(Math.Ceiling(Environment.ProcessorCount * 2.0));
-                    if (numOfMappersPerNode == 0) numOfMappersPerNode = chunks.Count;
+                    if (chunks.Count >= 150)
+                    {
+                        numOfMappersPerNode = 150; //Environment.ProcessorCount * 8;
+                    }
+                    else
+                    {
+                        numOfMappersPerNode = chunks.Count;
+                    }
                 }
 
                 var context = new ExecutionContext();

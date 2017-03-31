@@ -18,7 +18,8 @@ namespace MapReduce.Net.Test.DataBatchProcessors
                 var sb = new StringBuilder();
                 foreach (var line in lines)
                 {
-                    if (tracker != 0 && tracker % 50 == 0)
+                    // Split by every 20 lines
+                    if (tracker != 0 && tracker % 200 == 0)
                     {
                         result.Add(sb.ToString());
                         sb = new StringBuilder();
