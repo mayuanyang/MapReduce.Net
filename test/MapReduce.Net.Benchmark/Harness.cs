@@ -10,14 +10,15 @@ namespace MapReduce.Net.Benchmark
         [Fact]
         public void RunWordcountBenchmark()
         {
-            var report = BenchmarkRunner.Run<WordCountBenchmark>();
+            BenchmarkRunner.Run<WordCountBenchmark1LinePerInput>();
+            BenchmarkRunner.Run<WordCountBenchmark100LinesPerInput>();
             
         }
 
         [Fact]
         public async Task JustRunWithoutBenchmark()
         {
-            var runner = new WordCountBenchmark();
+            var runner = new WordCountBenchmark1LinePerInput();
             var result1 = await runner.WordCountWithoutCombinerAutoNumOfMappersPerNode();
             var result2 = await runner.WordCountWithCombinerAutoNumberOfMappers();
             var result3 = await runner.WordCountWithoutUsingMapReduce();
