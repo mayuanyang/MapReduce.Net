@@ -17,7 +17,7 @@ test_script:
 
 
 artifacts:
-- path: \**\artifacts\**\*.*
+- path: \**\*.artifacts\**\*.*
 
 cache:
 - '%USERPROFILE%\.nuget\packages'

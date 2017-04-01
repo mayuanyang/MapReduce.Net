@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageVersion>0.0.1</PackageVersion>
-    <Title>MapReduce in .NET</Title>
+    <Title>MapReduce.NET</Title>
     <Description>In memory MapReduce pattern implementation in .NET</Description>
     <AssemblyTitle>MapReduce.NET</AssemblyTitle>
     <Authors>Yuan(Eddy) Ma</Authors>
