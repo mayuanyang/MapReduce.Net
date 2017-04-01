@@ -5,11 +5,13 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="GoogleMapApi.txt" />
+    <None Remove="10000Lines.txt" />
+    <None Remove="40000Lines.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="GoogleMapApi.txt" />
+    <EmbeddedResource Include="10000Lines.txt" />
+    <EmbeddedResource Include="40000Lines.txt" />
   </ItemGroup>
 
   <ItemGroup>

@@ -27,7 +27,7 @@ namespace MapReduce.Net.Test
         public void AndGivenTheJobIsConfigured()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitByCoreCapacity));
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo4Chunks));
             _job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
         }
 

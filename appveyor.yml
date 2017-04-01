@@ -11,7 +11,10 @@ build:
 after_build:
 - dotnet pack "src\MapReduce.Net" -c %CONFIGURATION% --no-build -o artifacts
 
-test: off
+test_script:
+- dotnet test src\test\MapReduce.Net.Test\MapReduce.Net.Test.csproj -c %CONFIGURATION%
+- dotnet test src\test\MapReduce.Net.Benchmark\MapReduce.Net.Benchmark.csproj -c %CONFIGURATION%
+
 
 artifacts:
 - path: \**\artifacts\**\*.*

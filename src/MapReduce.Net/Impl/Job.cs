@@ -44,18 +44,21 @@ namespace MapReduce.Net.Impl
                 var chunks = (IList)resultProperty.Invoke(prepareDataTask, new object[] { });
                 var numOfMappersPerNode = _configurator.NumberOfMappersPerNode;
 
+                int numOfNodes = 1;
                 if (numOfMappersPerNode == 0)
                 {
-                    numOfMappersPerNode = Environment.ProcessorCount * 20;
+                    numOfMappersPerNode = Environment.ProcessorCount;
                 }
 
                 if (numOfMappersPerNode > chunks.Count)
                 {
                     numOfMappersPerNode = chunks.Count;
                 }
+                else
+                {
+                    numOfNodes = (int)decimal.Ceiling(chunks.Count / (decimal)numOfMappersPerNode);
+                }
                 
-                int numOfNodes = (int)decimal.Ceiling(chunks.Count / (decimal)numOfMappersPerNode);
-                if (numOfNodes == 0) numOfNodes = 1;
                 for (int i = 0; i < numOfNodes; i++)
                 {
                     var n = new Node(i.ToString(), _configurator);
@@ -63,10 +66,11 @@ namespace MapReduce.Net.Impl
                 }
 
                 int nodeIndex = 0;
+                int chunkIndex = 0;
                 var nodeTasks = new List<Task<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>>>();
                 foreach (var item in chunks)
                 {
-
+                    chunkIndex += 1;
                     var node = _nodes[nodeIndex];
                     if (node.Mappers.Count == numOfMappersPerNode)
                     {
@@ -88,7 +92,21 @@ namespace MapReduce.Net.Impl
                         // Run task as soon as the Node is ready
                         nodeTasks.Add(Task.Run(() => node.RunTasks<TMapperOutputKey, TMapperOutputValue>()));
                     }
+                    else
+                    {
+                        if (chunkIndex == chunks.Count)
+                        {
+                            nodeTasks.Add(Task.Run(() => node.RunTasks<TMapperOutputKey, TMapperOutputValue>()));
+                        }
+                    }
+
                 }
+
+                if (nodeTasks.Count != numOfNodes)
+                {
+                    throw new Exception("Inbalanced node tasks and nodes");
+                }
+
                 await Task.WhenAll(nodeTasks);
 
                 var allKeyValuePairsFromNodes = new List<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>>();
@@ -102,12 +120,9 @@ namespace MapReduce.Net.Impl
                 var reduceMethod = _configurator.TypeOfReducer.GetRuntimeMethods().Single(m => m.Name == "Reduce" && m.IsPublic && m.GetParameters().Any());
 
                 var flattenList = allKeyValuePairsFromNodes.SelectMany(x => x.ToList()).ToList();
-
-
                 var reduceTask = await (Task<TReturnData>)reduceMethod.Invoke(reducer, new object[] { reducer.GetHashCode().ToString(), flattenList });
-                
-                return reduceTask;
 
+                return reduceTask;
 
             }
             else

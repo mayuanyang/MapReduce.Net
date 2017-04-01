@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Threading.Tasks;
 using MapReduce.Net.Test.Mappers;
 using MapReduce.Net.Impl;
@@ -12,17 +13,15 @@ using Xunit;
 
 namespace MapReduce.Net.Test
 {
-    public class WordCountWithCombinerTest
+    public class WordCountWithCombiner10000Text
     {
-        private string _content = "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported\n" +
-                                  "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported\n" +
-                                  "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported";
+        private string _content = "";
 
         private Job<string, List<KeyValuePair<string, int>>> _job;
         private List<KeyValuePair<string, int>> _result;
         public void GivenAString()
         {
-            
+            _content = FileUtil.ReadFile(typeof(WordCountWithCombiner10000Text).GetTypeInfo().Assembly, "MapReduce.Net.Test.10000Lines.txt");
         }
 
         public void AndGivenTheJobIsConfigured()
@@ -42,23 +41,14 @@ namespace MapReduce.Net.Test
             int asserted = 0;
             foreach (var keyValuePair in _result)
             {
-                if (keyValuePair.Key.ToUpper() == "DECOUPLE")
+                if (keyValuePair.Key.ToUpper() == "EASIEST")
                 {
-                    keyValuePair.Value.ShouldBe(3);
+                    keyValuePair.Value.ShouldBe(70);
                     asserted++;
                 }
-                if (keyValuePair.Key.ToUpper() == "FOR")
-                {
-                    keyValuePair.Value.ShouldBe(6);
-                    asserted++;
-                }
-                if (keyValuePair.Key.ToUpper() == "COMMAND,")
-                {
-                    keyValuePair.Value.ShouldBe(3);
-                    asserted++;
-                }
+                
             }
-            asserted.ShouldBe(3);
+            asserted.ShouldBe(1);
         }
 
         [Fact]

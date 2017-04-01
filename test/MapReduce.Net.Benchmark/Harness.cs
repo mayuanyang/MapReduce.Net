@@ -1,6 +1,4 @@
-﻿using System.Threading.Tasks;
-using BenchmarkDotNet.Running;
-using Shouldly;
+﻿using BenchmarkDotNet.Running;
 using Xunit;
 
 namespace MapReduce.Net.Benchmark
@@ -8,23 +6,17 @@ namespace MapReduce.Net.Benchmark
     public class Harness
     {
         [Fact]
-        public void RunWordcountBenchmark()
+        public void RunWordcountBenchmark10000Lines()
         {
-            //BenchmarkRunner.Run<WordCountBenchmark1LinePerInput>();
-            BenchmarkRunner.Run<WordCountBenchmarkSplitByCoreCapacity>();
-            
+            BenchmarkRunner.Run<WordCountBenchmark10000LinesSplitTo4Chunk>();
+            BenchmarkRunner.Run<WordCountBenchmark10000LinesSplitTo8Chunk>();
         }
 
         [Fact]
-        public async Task JustRunWithoutBenchmark()
+        public void RunWordcountBenchmark40000Lines()
         {
-            var runner = new WordCountBenchmarkSplitByCoreCapacity();
-            
-            var result1 = await runner.WordCountWithoutCombinerAutoNumOfMappersPerNode();
-            var result2 = await runner.WordCountWithCombinerAutoNumberOfMappers();
-            var result3 = await runner.WordCountWithoutUsingMapReduce();
-            result1.Count.ShouldBe(result2.Count);
-            result2.Count.ShouldBe(result3.Count);
+            BenchmarkRunner.Run<WordCountBenchmark40000LinesSplitTo4Chunk>();
+            BenchmarkRunner.Run<WordCountBenchmark40000LinesSplitTo8Chunk>();
         }
-        }
+    }
 }

@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="10000Lines.txt" />
+    <None Remove="40000Lines.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="10000Lines.txt" />
+    <EmbeddedResource Include="40000Lines.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.0.0" />
     <PackageReference Include="Shouldly" Version="2.8.2" />
     <PackageReference Include="TestStack.BDDfy" Version="4.3.2" />
