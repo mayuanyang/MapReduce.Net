@@ -10,10 +10,13 @@ namespace MapReduce.Net.Impl
     public class Job<TInputData, TReturnData> : IJob<TInputData, TReturnData>
     {
         private readonly IJobConfigurator _configurator;
+        private readonly List<Node> _nodes;
 
         public Job(IJobConfigurator configurator)
         {
             _configurator = configurator;
+            _nodes = new List<Node>();
+
         }
         public async Task<TReturnData> Run<TMapperOutputKey, TMapperOutputValue>(TInputData inputData)
         {
@@ -43,24 +46,20 @@ namespace MapReduce.Net.Impl
 
                 if (numOfMappersPerNode == 0)
                 {
-                    if (chunks.Count >= 150)
-                    {
-                        numOfMappersPerNode = 150; //Environment.ProcessorCount * 8;
-                    }
-                    else
-                    {
-                        numOfMappersPerNode = chunks.Count;
-                    }
+                    numOfMappersPerNode = Environment.ProcessorCount * 20;
                 }
 
-                var context = new ExecutionContext();
-
+                if (numOfMappersPerNode > chunks.Count)
+                {
+                    numOfMappersPerNode = chunks.Count;
+                }
+                
                 int numOfNodes = (int)decimal.Ceiling(chunks.Count / (decimal)numOfMappersPerNode);
                 if (numOfNodes == 0) numOfNodes = 1;
                 for (int i = 0; i < numOfNodes; i++)
                 {
                     var n = new Node(i.ToString(), _configurator);
-                    context.Nodes.Add(n);
+                    _nodes.Add(n);
                 }
 
                 int nodeIndex = 0;
@@ -68,13 +67,13 @@ namespace MapReduce.Net.Impl
                 foreach (var item in chunks)
                 {
 
-                    var node = context.Nodes[nodeIndex];
+                    var node = _nodes[nodeIndex];
                     if (node.Mappers.Count == numOfMappersPerNode)
                     {
                         nodeIndex += 1;
-                        if (nodeIndex < context.Nodes.Count)
+                        if (nodeIndex < _nodes.Count)
                         {
-                            node = context.Nodes[nodeIndex];
+                            node = _nodes[nodeIndex];
                         }
                     }
                     // Create one mapper for each chunk and start mapping

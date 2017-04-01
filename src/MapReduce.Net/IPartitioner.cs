@@ -5,7 +5,7 @@ namespace MapReduce.Net
 {
     public interface IPartitioner
     {
-        Task Shuffle(ExecutionContext context);
+        Task Shuffle();
 
     }
 }
