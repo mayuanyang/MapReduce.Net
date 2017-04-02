@@ -10,8 +10,8 @@ namespace MapReduce.Net
     {
         IList<IMapper> Mappers { get; }
         IList<Task> MapperTasks { get; }
-        Task<List<KeyValuePair<TMapperKey, TMapperValue>>> RunTasks<TMapperKey, TMapperValue>();
-        ICombiner Combiner { get; }
+        Task<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>> RunTasks<TMapperOutputKey, TMapperOutputValue>();
+        IReducer Combiner { get; }
     }
 
     class Node : INode
@@ -31,30 +31,30 @@ namespace MapReduce.Net
         public IList<Task> MapperTasks { get; }
 
         
-        public ICombiner Combiner { get; set; }
-        public async Task<List<KeyValuePair<TMapperKey, TMapperValue>>> RunTasks<TMapperKey, TMapperValue>()
+        public IReducer Combiner { get; set; }
+        public async Task<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>> RunTasks<TMapperOutputKey, TMapperOutputValue>()
         {
             await Task.WhenAll(MapperTasks);
 
             // concat all keyvalue pairs
-            var allKeyValuePairsForNode = new List<List<KeyValuePair<TMapperKey, TMapperValue>>>();
-            for (int i = 0; i < Mappers.Count; i++)
+            var allKeyValuePairsForNode = new List<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>>();
+            foreach (var mapperTask in MapperTasks)
             {
-                var current = (List<KeyValuePair<TMapperKey, TMapperValue>>)Mappers[i].GetType().GetRuntimeProperty("KeyValuePairs").GetValue(Mappers[i], null);
-                allKeyValuePairsForNode.Add(current);
+                var resultProperty = mapperTask.GetType().GetTypeInfo().GetDeclaredProperty("Result").GetMethod;
+                var result = (Task<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>>)resultProperty.Invoke(mapperTask, new object[] { });
+                allKeyValuePairsForNode.Add(result.Result);
             }
-
-            var flattenList = allKeyValuePairsForNode.SelectMany(x => x.ToList());
+            var flatternList = allKeyValuePairsForNode.SelectMany(x => x.ToList()).ToList();
             if (_configurator.TypeOfCombiner != null)
             {
-                var combiner = (ICombiner)Activator.CreateInstance(_configurator.TypeOfCombiner);
+                var combiner = (IReducer)Activator.CreateInstance(_configurator.TypeOfCombiner);
                 var combineMethod = _configurator.TypeOfCombiner.GetRuntimeMethods().Single(m => m.Name == "Combine" && m.IsPublic && m.GetParameters().Any());
-
-
-                var combineTask = (Task<List<KeyValuePair<TMapperKey, TMapperValue>>>)combineMethod.Invoke(combiner, new object[] { combiner.GetHashCode().ToString(), flattenList });
+                
+                var combineTask = (Task<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>>)combineMethod.Invoke(combiner, new object[] { combiner.GetHashCode().ToString(), flatternList });
                 return combineTask.Result;
             }
-            return flattenList.ToList();
+           
+            return flatternList;
         }
     }
 }

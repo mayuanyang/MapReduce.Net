@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.Combiners
 {
-    public class WordCountCombiner : ICombiner<string, IEnumerable<KeyValuePair<string, int>>, string, int>
+    public class WordCountCombiner : ICombiner<string, List<KeyValuePair<string, int>>, string, int>
     {
         public WordCountCombiner()
         {
@@ -12,19 +12,19 @@ namespace MapReduce.Net.Test.Combiners
         }
 
         private List<KeyValuePair<string, int>> _keyValuePairs;
-        public Task<List<KeyValuePair<string, int>>> Combine(string key, IEnumerable<KeyValuePair<string, int>> values)
+        
+        public Task<List<KeyValuePair<string, int>>> Combine(string key, List<KeyValuePair<string, int>> values)
         {
             var dictionary = new Dictionary<string, int>();
-            
-            foreach (var keyValue in values)
+            foreach (var kv in values)
             {
-                if (dictionary.ContainsKey(keyValue.Key.ToUpper()))
+                if (dictionary.ContainsKey(kv.Key.ToUpper()))
                 {
-                    dictionary[keyValue.Key.ToUpper()] = dictionary[keyValue.Key.ToUpper()] + keyValue.Value;
+                    dictionary[kv.Key.ToUpper()] = dictionary[kv.Key.ToUpper()] + kv.Value;
                 }
                 else
                 {
-                    dictionary.Add(keyValue.Key.ToUpper(), keyValue.Value);
+                    dictionary.Add(kv.Key.ToUpper(), kv.Value);
                 }
             }
 
@@ -33,7 +33,8 @@ namespace MapReduce.Net.Test.Combiners
 #if DEBUG
                 Console.WriteLine($"Combiner {GetHashCode()} Key: {de.Key} Value: {de.Value}");
 #endif
-                _keyValuePairs.Add(new KeyValuePair<string, int>(de.Key, de.Value));
+                var kvForThisMapper = new KeyValuePair<string, int>(de.Key, de.Value);
+                _keyValuePairs.Add(kvForThisMapper);
             }
 
             return Task.FromResult(_keyValuePairs);

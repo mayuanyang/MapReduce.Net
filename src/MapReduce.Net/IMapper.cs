@@ -1,16 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MapReduce.Net
 {
     public interface IMapper
     {
-
+        
     }
-    public interface IMapper<TInputKey, TInputValue, TOutputKey, TOutputValue> : IMapper
+    public interface IMapper<TKeyIn, TValueIn, TKeyOut, TValueOut> : IMapper 
     {
-        List<KeyValuePair<TOutputKey, TOutputValue>> KeyValuePairs { get; }
-        Task Map(TInputKey key, TInputValue value);
+        Task<List<KeyValuePair<TKeyOut, TValueOut>>> Map(TKeyIn key, TValueIn value);
     }
 }

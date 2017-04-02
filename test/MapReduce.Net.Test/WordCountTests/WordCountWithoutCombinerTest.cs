@@ -1,15 +1,14 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using MapReduce.Net.Test.Mappers;
 using MapReduce.Net.Impl;
-using MapReduce.Net.Test.Combiners;
 using MapReduce.Net.Test.DataBatchProcessors;
+using MapReduce.Net.Test.Mappers;
 using MapReduce.Net.Test.Reducers;
 using Shouldly;
 using TestStack.BDDfy;
 using Xunit;
 
-namespace MapReduce.Net.Test
+namespace MapReduce.Net.Test.WordCountTests
 {
     public class WordCountWithoutCombinerTest
     {
@@ -17,7 +16,7 @@ namespace MapReduce.Net.Test
                                   "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported\n" +
                                   "Decouple does matter, A simple mediator for .Net for sending command, publishing event and request response with pipelines supported";
 
-        private Job<string, List<KeyValuePair<string, int>>> _job;
+        private Job _job;
         private List<KeyValuePair<string, int>> _result;
         public void GivenAString()
         {
@@ -28,12 +27,12 @@ namespace MapReduce.Net.Test
         {
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo4Chunks));
-            _job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
+            _job = new Job(configurator);
         }
 
         public async Task WhenTheJobIsExecuted()
         {
-            _result = await _job.Run<string, int>(_content);
+            _result = await _job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
         }
 
         public void ThenWeShouldGetTheWordCountResult()

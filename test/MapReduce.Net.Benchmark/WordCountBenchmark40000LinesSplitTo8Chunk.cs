@@ -1,12 +1,10 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Columns;
 using BenchmarkDotNet.Order;
 using MapReduce.Net.Impl;
-using MapReduce.Net.Test;
 using MapReduce.Net.Test.Combiners;
 using MapReduce.Net.Test.DataBatchProcessors;
 using MapReduce.Net.Test.Mappers;
@@ -21,15 +19,15 @@ namespace MapReduce.Net.Benchmark
         private readonly string _content;
         public WordCountBenchmark40000LinesSplitTo8Chunk()
         {
-            _content = FileUtil.ReadFile(typeof(WordCountBenchmark40000LinesSplitTo8Chunk).GetTypeInfo().Assembly, "MapReduce.Net.Benchmark.40000Lines.txt");
+            _content = FileUtil.ReadFile("MapReduce.Net.Benchmark.40000Lines.txt");
         }
         [Benchmark]
         public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombinerAutoNumOfMappersPerNode()
         {
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo8Chunks));
-            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
-            var result = await job.Run<string, int>(_content);
+            var job = new Job(configurator);
+            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
         }
 
@@ -39,8 +37,8 @@ namespace MapReduce.Net.Benchmark
         {
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo8Chunks), 2);
-            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
-            var result = await job.Run<string, int>(_content);
+            var job = new Job(configurator);
+            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
         }
 
@@ -49,8 +47,8 @@ namespace MapReduce.Net.Benchmark
         {
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo8Chunks));
-            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
-            var result = await job.Run<string, int>(_content);
+            var job = new Job(configurator);
+            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
         }
        
@@ -59,8 +57,8 @@ namespace MapReduce.Net.Benchmark
         {
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo8Chunks), 2);
-            var job = new Job<string, List<KeyValuePair<string, int>>>(configurator);
-            var result = await job.Run<string, int>(_content);
+            var job = new Job(configurator);
+            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
         }
 

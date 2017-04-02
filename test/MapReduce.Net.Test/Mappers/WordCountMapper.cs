@@ -7,14 +7,13 @@ namespace MapReduce.Net.Test.Mappers
 {
     public class WordCountMapper : IMapper<string, string, string, int>
     {
+        private List<KeyValuePair<string, int>> _keyValuePairs;
         public WordCountMapper()
         {
-            KeyValuePairs = new List<KeyValuePair<string, int>>();
+            _keyValuePairs = new List<KeyValuePair<string, int>>();
         }
-
-        public List<KeyValuePair<string, int>> KeyValuePairs { get; }
-
-        public Task Map(string key, string value)
+        
+        public Task<List<KeyValuePair<string, int>>> Map(string key, string value)
         {
             var words = value.Split(' ');
             string printContent = "";
@@ -23,24 +22,23 @@ namespace MapReduce.Net.Test.Mappers
             {
                 if (ht.ContainsKey(word))
                 {
-                    ht[word] = (int) ht[word] + 1;
+                    ht[word] = (int)ht[word] + 1;
                 }
                 else
                 {
                     ht.Add(word, 1);
                 }
-                
+
             }
             foreach (var word in ht.Keys)
             {
-                KeyValuePairs.Add(new KeyValuePair<string, int>(word.ToString(), (int)ht[word]));
+                _keyValuePairs.Add(new KeyValuePair<string, int>(word.ToString(), (int)ht[word]));
                 printContent += $"Key: {word}, Value: {1} \n";
             }
 #if DEBUG
             Console.WriteLine($"Mapper: {key} ThreadId: {System.Threading.Thread.CurrentThread.ManagedThreadId}\nKeyValues:\n{printContent}");
 #endif
-            return Task.FromResult(0);
+            return Task.FromResult(_keyValuePairs);
         }
-        
     }
 }

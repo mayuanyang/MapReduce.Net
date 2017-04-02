@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Impl
 {
-    public class Job<TInputData, TReturnData> : IJob<TInputData, TReturnData>
+    public class Job : IJob
     {
         private readonly IJobConfigurator _configurator;
         private readonly List<Node> _nodes;
@@ -18,7 +18,7 @@ namespace MapReduce.Net.Impl
             _nodes = new List<Node>();
 
         }
-        public async Task<TReturnData> Run<TMapperOutputKey, TMapperOutputValue>(TInputData inputData)
+        public async Task<TReturnData> Run<TInputData, TReturnData, TMapperOutputKey, TMapperOutputValue>(TInputData inputData)
         {
             if (_configurator.TypeOfMapper == null)
             {
@@ -37,7 +37,7 @@ namespace MapReduce.Net.Impl
             {
                 var dataProcessor = Activator.CreateInstance(_configurator.TypeOfDataBatchProcessor);
 
-                // Prepare the data as ienumerable
+                // Prepare the data as chunks
                 var runMethodFromDataProcessor = _configurator.TypeOfDataBatchProcessor.GetRuntimeMethods().Single(m => m.Name == "Run" && m.IsPublic && m.GetParameters().Any());
                 var prepareDataTask = (Task)runMethodFromDataProcessor.Invoke(dataProcessor, new object[] { inputData });
                 var resultProperty = prepareDataTask.GetType().GetTypeInfo().GetDeclaredProperty("Result").GetMethod;
@@ -116,13 +116,12 @@ namespace MapReduce.Net.Impl
                 }
 
                 // Run reducer
+                var flattenList = allKeyValuePairsFromNodes.SelectMany(x => x.ToList()).ToList();
                 var reducer = Activator.CreateInstance(_configurator.TypeOfReducer);
                 var reduceMethod = _configurator.TypeOfReducer.GetRuntimeMethods().Single(m => m.Name == "Reduce" && m.IsPublic && m.GetParameters().Any());
+                var reduceResult = await (Task<TReturnData>)reduceMethod.Invoke(reducer, new object[] { reducer.GetHashCode().ToString(), flattenList });
 
-                var flattenList = allKeyValuePairsFromNodes.SelectMany(x => x.ToList()).ToList();
-                var reduceTask = await (Task<TReturnData>)reduceMethod.Invoke(reducer, new object[] { reducer.GetHashCode().ToString(), flattenList });
-
-                return reduceTask;
+                return reduceResult;
 
             }
             else

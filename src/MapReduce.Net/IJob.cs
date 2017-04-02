@@ -2,9 +2,9 @@
 
 namespace MapReduce.Net
 {
-    public interface IJob<TInputData, TReturnData>
+    public interface IJob
     {
-        Task<TReturnData> Run<TMapperKey, TMapperValue>(TInputData input);
+        Task<TReturnData> Run<TInputData, TReturnData, TMapperOutputKey, TMapperOutputValue>(TInputData input);
 
     }
 }

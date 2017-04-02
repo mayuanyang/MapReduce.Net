@@ -7,8 +7,8 @@ namespace MapReduce.Net
     {
         
     }
-    public interface IReducer<TInputKey, TInputValue, TReturn> : IReducer
+    public interface IReducer<TKeyIn, TValueIn, TKeyOut, TValueOut> : IReducer
     {
-        Task<TReturn> Reduce(TInputKey key, TInputValue values);
+        Task<List<KeyValuePair<TKeyOut,TValueOut>>> Reduce(TKeyIn key, TValueIn values);
     }
 }

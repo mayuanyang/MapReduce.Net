@@ -6,9 +6,9 @@ namespace MapReduce.Net.Benchmark
 {
     static class FileUtil
     {
-        public static string ReadFile(Assembly assembly, string fileName)
+        public static string ReadFile(string fileName)
         {
-            var resourceStream = assembly.GetManifestResourceStream(fileName);
+            var resourceStream = typeof(FileUtil).GetTypeInfo().Assembly.GetManifestResourceStream(fileName);
 
             using (var reader = new StreamReader(resourceStream, Encoding.UTF8))
             {
