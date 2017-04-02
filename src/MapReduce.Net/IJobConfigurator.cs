@@ -9,6 +9,7 @@ namespace MapReduce.Net
         Type TypeOfReducer { get; }
         Type TypeOfDataBatchProcessor { get; }
         int NumberOfMappersPerNode { get; }
+        int NumberOfChunks { get; }
         IDependancyScope DependancyScope { get; }
 
     }

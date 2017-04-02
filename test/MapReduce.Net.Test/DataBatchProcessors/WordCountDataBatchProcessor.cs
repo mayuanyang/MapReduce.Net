@@ -6,14 +6,13 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.DataBatchProcessors
 {
-    public class WordCountDataBatchProcessorSplitTo8Chunks : IDataBatchProcessor<string, List<string>>
+    public class WordCountDataBatchProcessor : IDataBatchProcessor<string, List<string>>
     {
-        public Task<List<string>> Run(string inputData)
+        public Task<List<string>> Run(string inputData, int numberOfChunks = 4)
         {
             var result = new List<string>();
             var lines = inputData.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();
-            var numOfChunks = 8;
-            var linesPerChunk = lines.Count / numOfChunks;
+            var linesPerChunk = lines.Count / numberOfChunks;
             if (linesPerChunk == 0)
             {
                 return Task.FromResult(lines);

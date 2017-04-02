@@ -17,7 +17,7 @@ using Xunit;
 
 namespace MapReduce.Net.Test.WaveDataTests
 {
-    public class WaveDataWithCombinerTest
+    public class WaveDataWithCombiner8ChunksTest
     {
         private List<WaveData> _waveDatas;
 
@@ -44,7 +44,7 @@ namespace MapReduce.Net.Test.WaveDataTests
         public void AndGivenTheJobIsConfigured()
         {
             var configurator =
-                new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 2);
+                new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 2, 8);
             _job = new Job(configurator);
         }
 

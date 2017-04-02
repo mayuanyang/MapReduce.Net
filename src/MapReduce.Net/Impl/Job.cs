@@ -39,7 +39,7 @@ namespace MapReduce.Net.Impl
 
                 // Prepare the data as chunks
                 var runMethodFromDataProcessor = _configurator.TypeOfDataBatchProcessor.GetRuntimeMethods().Single(m => m.Name == "Run" && m.IsPublic && m.GetParameters().Any());
-                var prepareDataTask = (Task)runMethodFromDataProcessor.Invoke(dataProcessor, new object[] { inputData });
+                var prepareDataTask = (Task)runMethodFromDataProcessor.Invoke(dataProcessor, new object[] { inputData, _configurator.NumberOfChunks });
                 var resultProperty = prepareDataTask.GetType().GetTypeInfo().GetDeclaredProperty("Result").GetMethod;
                 var chunks = (IList)resultProperty.Invoke(prepareDataTask, new object[] { });
                 var numOfMappersPerNode = _configurator.NumberOfMappersPerNode;

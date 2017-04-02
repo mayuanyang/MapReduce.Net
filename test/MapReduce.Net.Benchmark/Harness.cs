@@ -24,5 +24,11 @@ namespace MapReduce.Net.Benchmark
         {
             BenchmarkRunner.Run<WaveDataAvgBenchmark5065RecordsSplitTo4Chunk>();
         }
+
+        [Fact]
+        public void RunWaveDataBenchmark8Chunks5065Records()
+        {
+            BenchmarkRunner.Run<WaveDataAvgBenchmark5065RecordsSplitTo8Chunk>();
+        }
     }
 }

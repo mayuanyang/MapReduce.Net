@@ -10,6 +10,6 @@ namespace MapReduce.Net
     public interface IDataBatchProcessor<TInputData, TOutputData> : IDataBatchProcessor
         where TOutputData : IList
     {
-        Task<TOutputData> Run(TInputData inputData);
+        Task<TOutputData> Run(TInputData inputData, int numberOfChunks = 4);
     }
 }

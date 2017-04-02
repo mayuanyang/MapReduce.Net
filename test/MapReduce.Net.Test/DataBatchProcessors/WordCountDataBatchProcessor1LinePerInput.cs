@@ -8,7 +8,7 @@ namespace MapReduce.Net.Test.DataBatchProcessors
 {
     public class WordCountDataBatchProcessor1LinePerInput : IDataBatchProcessor<string, List<string>>
     {
-        public Task<List<string>> Run(string inputData)
+        public Task<List<string>> Run(string inputData, int numberOfChunks = 4)
         {
             
             var lines = inputData.Split(new string[] { "\r\n", "\n" }, StringSplitOptions.None).ToList();

@@ -1,7 +1,5 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Attributes.Columns;
@@ -27,7 +25,7 @@ namespace MapReduce.Net.Benchmark
         public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombinerAutoNumOfMappersPerNode()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo4Chunks));
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
             var job = new Job(configurator);
             var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
@@ -38,7 +36,7 @@ namespace MapReduce.Net.Benchmark
         public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner2MappersPerNode()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo4Chunks), 2);
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 2);
             var job = new Job(configurator);
             var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
@@ -48,7 +46,7 @@ namespace MapReduce.Net.Benchmark
         public async Task<List<KeyValuePair<string, int>>> WordCountWithoutCombiner4MappersPerNode()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo4Chunks), 4);
+                new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 4);
             var job = new Job(configurator);
             var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
@@ -58,7 +56,7 @@ namespace MapReduce.Net.Benchmark
         public async Task<List<KeyValuePair<string, int>>> WordCountWithCombinerAutoNumberOfMappers()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo4Chunks));
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
             var job = new Job(configurator);
             var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
@@ -69,7 +67,7 @@ namespace MapReduce.Net.Benchmark
         public async Task<List<KeyValuePair<string, int>>> WordCountWithCombiner2MappersPerNode()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo4Chunks), 2);
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 2);
             var job = new Job(configurator);
             var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
@@ -79,7 +77,7 @@ namespace MapReduce.Net.Benchmark
         public async Task<List<KeyValuePair<string, int>>> WordCountWithCombiner4MappersPerNode()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessorSplitTo4Chunks), 4);
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 4);
             var job = new Job(configurator);
             var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
@@ -88,7 +86,7 @@ namespace MapReduce.Net.Benchmark
         [Benchmark]
         public async Task<Hashtable> WordCountWithoutUsingMapReduce()
         {
-            var dataProcessor = new WordCountDataBatchProcessorSplitTo4Chunks();
+            var dataProcessor = new WordCountDataBatchProcessor();
             var lines = await dataProcessor.Run(_content);
             var wordCount = new Hashtable();
             foreach (var line in lines)
