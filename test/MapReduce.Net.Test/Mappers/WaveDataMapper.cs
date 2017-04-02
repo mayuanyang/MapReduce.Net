@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.Mappers
@@ -14,7 +15,8 @@ namespace MapReduce.Net.Test.Mappers
 
         public Task<List<KeyValuePair<string, List<WaveData>>>> Map(string key, List<WaveData> value)
         {
-            _keyValuePairs.Add(new KeyValuePair<string, List<WaveData>>(key, value));
+            _keyValuePairs = value.Select(x => new KeyValuePair<string, List<WaveData>>(x.Site, new List<WaveData> {x}))
+                .ToList();
             return Task.FromResult(_keyValuePairs);
         }
     }

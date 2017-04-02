@@ -44,7 +44,7 @@ namespace MapReduce.Net.Test.WaveDataTests
         public void AndGivenTheJobIsConfigured()
         {
             var configurator =
-                new JobConfigurator(typeof(WaveDataMapper), null, typeof(WaveDataReducer), typeof(WaveDataBatchProcessor));
+                new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor));
             _job = new Job(configurator);
         }
 

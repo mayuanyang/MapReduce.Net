@@ -48,7 +48,7 @@ namespace MapReduce.Net
             if (_configurator.TypeOfCombiner != null)
             {
                 var combiner = (IReducer)Activator.CreateInstance(_configurator.TypeOfCombiner);
-                var combineMethod = _configurator.TypeOfCombiner.GetRuntimeMethods().Single(m => m.Name == "Combine" && m.IsPublic && m.GetParameters().Any());
+                var combineMethod = _configurator.TypeOfCombiner.GetRuntimeMethods().Single(m => m.Name == "Reduce" && m.IsPublic && m.GetParameters().Any());
                 
                 var combineTask = (Task<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>>)combineMethod.Invoke(combiner, new object[] { combiner.GetHashCode().ToString(), flatternList });
                 return combineTask.Result;

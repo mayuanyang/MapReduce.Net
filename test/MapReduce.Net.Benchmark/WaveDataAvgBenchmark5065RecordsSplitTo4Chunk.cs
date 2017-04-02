@@ -10,6 +10,7 @@ using BenchmarkDotNet.Order;
 using CsvHelper;
 using MapReduce.Net.Impl;
 using MapReduce.Net.Test;
+using MapReduce.Net.Test.Combiners;
 using MapReduce.Net.Test.DataBatchProcessors;
 using MapReduce.Net.Test.Mappers;
 using MapReduce.Net.Test.Reducers;
@@ -39,7 +40,7 @@ namespace MapReduce.Net.Benchmark
             }
         }
         [Benchmark]
-        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WordCountWithoutCombinerAutoNumOfMappersPerNode()
+        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WaveDataWithoutCombinerAutoNumOfMappersPerNode()
         {
             var configurator =
                 new JobConfigurator(typeof(WaveDataMapper), null, typeof(WaveDataReducer), typeof(WaveDataBatchProcessor));
@@ -49,7 +50,7 @@ namespace MapReduce.Net.Benchmark
         }
        
         [Benchmark]
-        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WordCountWithoutCombiner2MappersPerNode()
+        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WaveDataWithoutCombiner2MappersPerNode()
         {
             var configurator =
                 new JobConfigurator(typeof(WaveDataMapper), null, typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 2);
@@ -59,7 +60,7 @@ namespace MapReduce.Net.Benchmark
         }
 
         [Benchmark]
-        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WordCountWithoutCombiner4MappersPerNode()
+        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WaveDataWithoutCombiner4MappersPerNode()
         {
             var configurator =
                 new JobConfigurator(typeof(WaveDataMapper), null, typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 4);
@@ -69,17 +70,38 @@ namespace MapReduce.Net.Benchmark
         }
 
         [Benchmark]
-        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WordCountWithCombinerAutoNumOfMappersPerNode()
+        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WaveDataWithCombinerAutoNumOfMappersPerNode()
         {
             var configurator =
-                new JobConfigurator(typeof(WaveDataMapper), typeof(WordCountReducer), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor));
+                new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor));
             var job = new Job(configurator);
             var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
             return result;
         }
 
         [Benchmark]
-        public Task<List<KeyValuePair<string, WaveDataAverage>>> WordCountWithoutUsingMapReduce()
+        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WaveDataWithCombiner2MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 2);
+            var job = new Job(configurator);
+            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            return result;
+        }
+
+
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WaveDataWithCombiner4MappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 4);
+            var job = new Job(configurator);
+            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            return result;
+        }
+
+        [Benchmark]
+        public Task<List<KeyValuePair<string, WaveDataAverage>>> WaveDataWithoutUsingMapReduce()
         {
 
             var result = new List<KeyValuePair<string, WaveDataAverage>>();
