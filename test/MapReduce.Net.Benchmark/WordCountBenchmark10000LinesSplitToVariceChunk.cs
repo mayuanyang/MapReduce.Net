@@ -14,10 +14,10 @@ namespace MapReduce.Net.Benchmark
 {
     [RankColumn]
     [OrderProvider(SummaryOrderPolicy.FastestToSlowest)]
-    public class WordCountBenchmark10000LinesSplitTo8Chunk
+    public class WordCountBenchmark10000LinesSplitToVariceChunk
     {
         private readonly string _content;
-        public WordCountBenchmark10000LinesSplitTo8Chunk()
+        public WordCountBenchmark10000LinesSplitToVariceChunk()
         {
             _content = FileUtil.ReadFile("MapReduce.Net.Benchmark.10000Lines.txt");
         }
@@ -73,11 +73,11 @@ namespace MapReduce.Net.Benchmark
             return result;
         }
 
-    
-        public async Task<List<KeyValuePair<string, int>>> WordCountWithCombiner4MappersPerNode()
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, int>>> WordCountWithCombiner4MappersPerNode16Chunks()
         {
             var configurator =
-                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 4, 8);
+                new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 4, 16);
             var job = new Job(configurator);
             var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
             return result;
