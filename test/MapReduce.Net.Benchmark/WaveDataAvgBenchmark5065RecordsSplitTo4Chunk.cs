@@ -47,8 +47,7 @@ namespace MapReduce.Net.Benchmark
             var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
             return result;
         }
-
-        
+       
         [Benchmark]
         public async Task<List<KeyValuePair<string, WaveDataAverage>>> WordCountWithoutCombiner2MappersPerNode()
         {
@@ -69,11 +68,20 @@ namespace MapReduce.Net.Benchmark
             return result;
         }
 
-       
+        [Benchmark]
+        public async Task<List<KeyValuePair<string, WaveDataAverage>>> WordCountWithCombinerAutoNumOfMappersPerNode()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WaveDataMapper), typeof(WordCountReducer), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor));
+            var job = new Job(configurator);
+            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            return result;
+        }
+
         [Benchmark]
         public Task<List<KeyValuePair<string, WaveDataAverage>>> WordCountWithoutUsingMapReduce()
         {
-            
+
             var result = new List<KeyValuePair<string, WaveDataAverage>>();
             var siteGroups = _waveDatas.GroupBy(x => x.Site, y => y);
             foreach (var siteGroup in siteGroups)
@@ -101,6 +109,6 @@ namespace MapReduce.Net.Benchmark
             }
             return Task.FromResult(result);
         }
-        
+
     }
 }
