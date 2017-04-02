@@ -7,11 +7,13 @@
   <ItemGroup>
     <None Remove="10000Lines.txt" />
     <None Remove="40000Lines.txt" />
+    <None Remove="wave-7dayopdata.csv" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="10000Lines.txt" />
     <EmbeddedResource Include="40000Lines.txt" />
+    <EmbeddedResource Include="wave-7dayopdata.csv" />
   </ItemGroup>
 
   <ItemGroup>

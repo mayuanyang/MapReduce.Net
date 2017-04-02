@@ -1,10 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.Mappers
 {
-    class WaveDataMapper : IMapper<string, List<WaveData>, string, List<WaveData>>
+    public class WaveDataMapper : IMapper<string, List<WaveData>, string, List<WaveData>>
     {
         private List<KeyValuePair<string, List<WaveData>>> _keyValuePairs;
         public WaveDataMapper()

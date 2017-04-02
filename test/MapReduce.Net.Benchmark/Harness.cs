@@ -18,5 +18,11 @@ namespace MapReduce.Net.Benchmark
             BenchmarkRunner.Run<WordCountBenchmark40000LinesSplitTo4Chunk>();
             BenchmarkRunner.Run<WordCountBenchmark40000LinesSplitTo8Chunk>();
         }
+
+        [Fact]
+        public void RunWaveDataBenchmark5065Records()
+        {
+            BenchmarkRunner.Run<WaveDataAvgBenchmark5065RecordsSplitTo4Chunk>();
+        }
     }
 }

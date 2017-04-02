@@ -1,12 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.DataBatchProcessors
 {
-    class WaveDataBatchProcessor : IDataBatchProcessor<List<WaveData>, List<List<WaveData>>>
+    public class WaveDataBatchProcessor : IDataBatchProcessor<List<WaveData>, List<List<WaveData>>>
     {
         public Task<List<List<WaveData>>> Run(List<WaveData> inputData)
         {
