@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace MapReduce.Net.Test.Combiners
 {
-    public class WaveDataCombiner : IReducer<string, List<KeyValuePair<string, List<WaveData>>>, string, List<WaveData>>
+    public class WaveDataCombiner : ICombiner<string, List<KeyValuePair<string, List<WaveData>>>, string, List<WaveData>>
     {
-        public Task<List<KeyValuePair<string, List<WaveData>>>> Reduce(string key, List<KeyValuePair<string, List<WaveData>>> values)
+        public Task<List<KeyValuePair<string, List<WaveData>>>> Combine(string key, List<KeyValuePair<string, List<WaveData>>> values)
         {
             var result = new List<KeyValuePair<string, List<WaveData>>>();
             var flatternList = values.SelectMany(x => x.Value).ToList();

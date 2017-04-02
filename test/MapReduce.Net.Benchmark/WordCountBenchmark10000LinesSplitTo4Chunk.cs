@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
@@ -89,7 +90,6 @@ namespace MapReduce.Net.Benchmark
         {
             var dataProcessor = new WordCountDataBatchProcessorSplitTo4Chunks();
             var lines = await dataProcessor.Run(_content);
-
             var wordCount = new Hashtable();
             foreach (var line in lines)
             {
