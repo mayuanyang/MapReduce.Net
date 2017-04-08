@@ -11,6 +11,7 @@ namespace MapReduce.Net
         int NumberOfMappersPerNode { get; }
         int NumberOfChunks { get; }
         IDependancyScope DependancyScope { get; }
+        void ValidateConfiguration();
 
     }
 }

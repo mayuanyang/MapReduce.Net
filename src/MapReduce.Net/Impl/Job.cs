@@ -20,18 +20,7 @@ namespace MapReduce.Net.Impl
         }
         public async Task<TReturnData> Run<TInputData, TReturnData, TMapperOutputKey, TMapperOutputValue>(TInputData inputData)
         {
-            if (_configurator.TypeOfMapper == null)
-            {
-                throw new ArgumentException("Type of mapper is not provided");
-            }
-            if (_configurator.TypeOfReducer == null)
-            {
-                throw new ArgumentException("Type of reducer is not provided");
-            }
-            if (_configurator.TypeOfDataBatchProcessor == null)
-            {
-                throw new ArgumentException("Type of IDataBatchProcessor is not provided");
-            }
+            _configurator.ValidateConfiguration();
 
             if (_configurator.DependancyScope == null)
             {
