@@ -50,7 +50,7 @@ namespace MapReduce.Net.Test.WaveDataTests
 
         public async Task WhenTheJobIsExecuted()
         {
-            _result = await _job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            _result = await _job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>, string, List<WaveData>>(_waveDatas);
         }
 
         public void ThenWeShouldGetTheWordCountResult()

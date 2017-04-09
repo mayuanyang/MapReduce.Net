@@ -33,7 +33,7 @@ namespace MapReduce.Net.Test.WordCountTests
 
         public async Task WhenTheJobIsExecuted()
         {
-            _result = await _job.Run<string, List<KeyValuePair<string, int>>, string, int>(_content);
+            _result = await _job.Run<string, List<KeyValuePair<string, int>>, string, int, string, int>(_content);
         }
 
         public void ThenWeShouldGetTheWordCountResult()

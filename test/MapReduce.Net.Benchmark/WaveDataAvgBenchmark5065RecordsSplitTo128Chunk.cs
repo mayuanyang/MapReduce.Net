@@ -45,7 +45,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WaveDataMapper), null, typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 0, 128);
             var job = new Job(configurator);
-            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>, string, List<WaveData>>(_waveDatas);
             return result;
         }
        
@@ -55,7 +55,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WaveDataMapper), null, typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 2, 128);
             var job = new Job(configurator);
-            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>, string, List<WaveData>>(_waveDatas);
             return result;
         }
 
@@ -65,7 +65,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WaveDataMapper), null, typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 8, 128);
             var job = new Job(configurator);
-            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>, string, List<WaveData>>(_waveDatas);
             return result;
         }
 
@@ -75,7 +75,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 0 ,128);
             var job = new Job(configurator);
-            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>, string, List<WaveData>>(_waveDatas);
             return result;
         }
 
@@ -85,7 +85,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 8, 128);
             var job = new Job(configurator);
-            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>, string, List<WaveData>>(_waveDatas);
             return result;
         }
 
@@ -96,7 +96,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 4, 128);
             var job = new Job(configurator);
-            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>>(_waveDatas);
+            var result = await job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>, string, List<WaveData>>(_waveDatas);
             return result;
         }
 
