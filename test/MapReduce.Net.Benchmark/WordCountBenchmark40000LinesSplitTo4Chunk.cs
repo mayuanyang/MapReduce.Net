@@ -29,7 +29,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
             var job = new Job(configurator);
-            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int, string, int>(_content);
+            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, string, string, int>(_content);
             return result;
         }
 
@@ -40,7 +40,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), null, typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 2);
             var job = new Job(configurator);
-            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int, string, int>(_content);
+            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, string, string, int>(_content);
             return result;
         }
 
@@ -50,7 +50,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor));
             var job = new Job(configurator);
-            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int, string, int>(_content);
+            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, string, string, int>(_content);
             return result;
         }
        
@@ -60,7 +60,7 @@ namespace MapReduce.Net.Benchmark
             var configurator =
                 new JobConfigurator(typeof(WordCountMapper), typeof(WordCountCombiner), typeof(WordCountReducer), typeof(WordCountDataBatchProcessor), 2);
             var job = new Job(configurator);
-            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, int, string, int>(_content);
+            var result = await job.Run<string, List<KeyValuePair<string, int>>, string, string, string, int>(_content);
             return result;
         }
 
