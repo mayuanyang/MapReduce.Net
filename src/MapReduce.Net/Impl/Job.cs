@@ -28,27 +28,18 @@ namespace MapReduce.Net.Impl
                 numOfMappersPerNode = Environment.ProcessorCount;
             }
 
+            IDataBatchProcessor<TInputData, List<TInputData>> dataProcessor;
             if (_configurator.DependancyScope == null)
             {
-                var dataProcessor = Activator.CreateInstance(_configurator.TypeOfDataBatchProcessor);
-
-                // Prepare the data as chunks
-                var runMethodFromDataProcessor = _configurator.TypeOfDataBatchProcessor.GetRuntimeMethods().Single(m => m.Name == "Run" && m.IsPublic && m.GetParameters().Any());
-                var prepareDataTask = (Task)runMethodFromDataProcessor.Invoke(dataProcessor, new object[] { inputData, _configurator.NumberOfChunks });
-                var resultProperty = prepareDataTask.GetType().GetTypeInfo().GetDeclaredProperty("Result").GetMethod;
-                var chunks = (IList)resultProperty.Invoke(prepareDataTask, new object[] { });
-
-                var reduceResult = await InternalRun<TInputData, TReturnData, TMapperKeyIn, TMapperValueIn, TMapperOutputKey, TMapperOutputValue>(chunks, numOfMappersPerNode);
-                return reduceResult;
-
+                dataProcessor = (IDataBatchProcessor<TInputData, List<TInputData>>)Activator.CreateInstance(_configurator.TypeOfDataBatchProcessor);
             }
             else
             {
-                var dataProcessor = (IDataBatchProcessor<TInputData, IList>)_configurator.DependancyScope.Resolve(_configurator.TypeOfDataBatchProcessor);
-                var chunks = await dataProcessor.Run(inputData);
-                var reduceResult = await InternalRun<TInputData, TReturnData, TMapperKeyIn, TMapperValueIn, TMapperOutputKey, TMapperOutputValue>(chunks, numOfMappersPerNode);
-                return reduceResult;
+                dataProcessor = (IDataBatchProcessor<TInputData, List<TInputData>>)_configurator.DependancyScope.Resolve(_configurator.TypeOfDataBatchProcessor);                
             }
+            var chunks = await dataProcessor.Run(inputData);
+            var reduceResult = await InternalRun<TInputData, TReturnData, TMapperKeyIn, TMapperValueIn, TMapperOutputKey, TMapperOutputValue>(chunks, numOfMappersPerNode);
+            return reduceResult;
         }
 
         private async Task<TReturnData> InternalRun<TInputData, TReturnData, TMapperKeyIn, TMapperValueIn, TMapperOutputKey, TMapperOutputValue>(IList chunks, int numOfMappersPerNode)
@@ -86,24 +77,20 @@ namespace MapReduce.Net.Impl
                 }
                 // Create one mapper for each chunk and start mapping
                 Task mapTask;
+                IMapper<TMapperKeyIn, TMapperValueIn, TMapperOutputKey, TMapperOutputValue> mapper;
                 if (_configurator.DependancyScope == null)
                 {
-                    var mapper = Activator.CreateInstance(_configurator.TypeOfMapper);
-                    var mapMethod = _configurator.TypeOfMapper.GetRuntimeMethods()
-                        .Single(m => m.Name == "Map" && m.IsPublic && m.GetParameters().Any());
-                    mapTask = Task.Run(() => mapMethod.Invoke(mapper, new[] {mapper.GetHashCode().ToString(), item}));
-                    node.MapperTasks.Add(mapTask);
-                    node.Mappers.Add(mapper as IMapper);
+                    mapper = (IMapper<TMapperKeyIn, TMapperValueIn, TMapperOutputKey, TMapperOutputValue>)Activator.CreateInstance(_configurator.TypeOfMapper);
                 }
                 else
                 {
-                    var mapper = (IMapper<TMapperKeyIn, TMapperValueIn, TMapperOutputKey, TMapperOutputValue>)_configurator.DependancyScope.Resolve(_configurator.TypeOfMapper);
-                    mapTask = Task.Run(() => mapper.Map((TMapperKeyIn)(object)mapper.GetHashCode().ToString(), (TMapperValueIn)item));
-                    node.MapperTasks.Add(mapTask);
-                    node.Mappers.Add(mapper);
+                    mapper = (IMapper<TMapperKeyIn, TMapperValueIn, TMapperOutputKey, TMapperOutputValue>)_configurator.DependancyScope.Resolve(_configurator.TypeOfMapper);
                 }
-                
-                
+                mapTask = Task.Run(() => mapper.Map((TMapperKeyIn)(object)mapper.GetHashCode().ToString(), (TMapperValueIn)item));
+                node.MapperTasks.Add(mapTask);
+                node.Mappers.Add(mapper);
+
+
                 if (node.Mappers.Count == numOfMappersPerNode)
                 {
                     // Run task as soon as the Node is ready
@@ -144,7 +131,7 @@ namespace MapReduce.Net.Impl
             else
             {
                 var reducer = (IReducer<TMapperOutputKey, TMapperOutputValue, TMapperOutputKey, TReturnData>)_configurator.DependancyScope.Resolve(_configurator.TypeOfReducer);
-                var reduceResult = await reducer.Reduce((TMapperOutputKey) (object) reducer.GetHashCode(), (TMapperOutputValue) (object)flattenList);
+                var reduceResult = await reducer.Reduce((TMapperOutputKey)(object)reducer.GetHashCode(), (TMapperOutputValue)(object)flattenList);
                 return (TReturnData)(object)reduceResult;
             }
             

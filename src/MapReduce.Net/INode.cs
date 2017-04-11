@@ -40,9 +40,9 @@ namespace MapReduce.Net
             var allKeyValuePairsForNode = new List<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>>();
             foreach (var mapperTask in MapperTasks)
             {
-                var resultProperty = mapperTask.GetType().GetTypeInfo().GetDeclaredProperty("Result").GetMethod;
-                var result = (Task<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>>)resultProperty.Invoke(mapperTask, new object[] { });
-                allKeyValuePairsForNode.Add(result.Result);
+                var resultProperty = mapperTask.GetType().GetRuntimeProperty("Result").GetMethod;
+                var result = (List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>)resultProperty.Invoke(mapperTask, new object[] { });
+                allKeyValuePairsForNode.Add(result);
             }
             var flatternList = allKeyValuePairsForNode.SelectMany(x => x.ToList()).ToList();
             if (_configurator.TypeOfCombiner != null)
