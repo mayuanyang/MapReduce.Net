@@ -1,0 +1,81 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Threading.Tasks;
+using Autofac;
+using CsvHelper;
+using MapReduce.Net.Autofac;
+using MapReduce.Net.Impl;
+using MapReduce.Net.Test.Combiners;
+using MapReduce.Net.Test.DataBatchProcessors;
+using MapReduce.Net.Test.Mappers;
+using MapReduce.Net.Test.Reducers;
+using MapReduce.Net.Test.Utils;
+using Shouldly;
+using TestStack.BDDfy;
+using Xunit;
+
+namespace MapReduce.Net.Test.AutofacTests
+{
+    public class WaveShouldStillWorkWithAutofac
+    {
+        private List<WaveData> _waveDatas;
+
+        private Job _job;
+        private IContainer _container;
+        private List<KeyValuePair<string, WaveDataAverage>> _result;
+        public void GivenTheWaveData()
+        {
+            var resourceStream = typeof(FileUtil).GetTypeInfo().Assembly.GetManifestResourceStream("MapReduce.Net.Test.wave-7dayopdata.csv");
+
+            using (var reader = new StreamReader(resourceStream, Encoding.UTF8))
+            {
+                var line = reader.ReadLine(); // Skip the first line
+                using (var csv = new CsvReader(reader))
+                {
+                    csv.Configuration.HasHeaderRecord = true;
+                    csv.Configuration.IgnoreHeaderWhiteSpace = true;
+                    csv.Configuration.IsHeaderCaseSensitive = false;
+                    _waveDatas = csv.GetRecords<WaveData>().ToList();
+                }
+
+            }
+        }
+
+        public void AndGivenTheContainerIsSetup()
+        {
+            var builder = new ContainerBuilder();
+            builder.RegisterType<WaveDataBatchProcessor>().AsSelf();
+            builder.RegisterType<WaveDataMapper>().AsSelf();
+            builder.RegisterType<WaveDataCombiner>().AsSelf();
+            builder.RegisterType<WaveDataReducer>().AsSelf();
+            _container = builder.Build();
+        }
+
+        public void AndGivenTheJobIsConfigured()
+        {
+            var configurator =
+                new JobConfigurator(typeof(WaveDataMapper), typeof(WaveDataCombiner), typeof(WaveDataReducer), typeof(WaveDataBatchProcessor), 2);
+            _job = new Job(configurator);
+        }
+
+        public async Task WhenTheJobIsExecuted()
+        {
+            _result = await _job.Run<List<WaveData>, List<KeyValuePair<string, WaveDataAverage>>, string, List<WaveData>, string, List<WaveData>>(_waveDatas);
+        }
+
+        public void ThenWeShouldGetTheWordCountResult()
+        {
+            _result.Count.ShouldBe(14);
+        }
+
+        [Fact]
+        public void Run()
+        {
+            this.BDDfy();
+        }
+    }
+}
