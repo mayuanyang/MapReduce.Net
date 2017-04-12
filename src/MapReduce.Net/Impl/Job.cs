@@ -113,28 +113,16 @@ namespace MapReduce.Net.Impl
 
             await Task.WhenAll(nodeTasks);
 
-            var allKeyValuePairsFromNodes = new List<List<KeyValuePair<TMapperOutputKey, TMapperOutputValue>>>();
-            foreach (var t in nodeTasks)
-            {
-                allKeyValuePairsFromNodes.Add(t.Result);
-            }
+            var allKeyValuePairsFromNodes = nodeTasks.Select(t => t.Result).ToList();
 
             // Run reducer
+            object reducer;
             var flattenList = allKeyValuePairsFromNodes.SelectMany(x => x.ToList()).ToList();
-            if (_configurator.DependancyScope == null)
-            {
-                var reducer = Activator.CreateInstance(_configurator.TypeOfReducer);
-                var reduceMethod = _configurator.TypeOfReducer.GetRuntimeMethods().Single(m => m.Name == "Reduce" && m.IsPublic && m.GetParameters().Any());
-                var reduceResult = await (Task<TReturnData>)reduceMethod.Invoke(reducer, new object[] { reducer.GetHashCode().ToString(), flattenList });
-                return reduceResult;
-            }
-            else
-            {
-                var reducer = (IReducer<TMapperOutputKey, TMapperOutputValue, TMapperOutputKey, TReturnData>)_configurator.DependancyScope.Resolve(_configurator.TypeOfReducer);
-                var reduceResult = await reducer.Reduce((TMapperOutputKey)(object)reducer.GetHashCode(), (TMapperOutputValue)(object)flattenList);
-                return (TReturnData)(object)reduceResult;
-            }
-            
+            reducer = _configurator.DependancyScope == null ? Activator.CreateInstance(_configurator.TypeOfReducer) : _configurator.DependancyScope.Resolve(_configurator.TypeOfReducer);
+            var reduceMethod = _configurator.TypeOfReducer.GetRuntimeMethods().Single(m => m.Name == "Reduce" && m.IsPublic && m.GetParameters().Any());
+            var reduceResult = await (Task<TReturnData>)reduceMethod.Invoke(reducer, new object[] { reducer.GetHashCode().ToString(), flattenList });
+            return reduceResult;
+
         }
     }
 }
